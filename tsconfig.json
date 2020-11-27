@@ -4,7 +4,8 @@
     "declaration": true,
     "paths": {
       "@src/*": ["src/*"],
-      "@common/*": ["src/common/*"]
+      "@common/*": ["src/common/*"],
+      "@routes/*": ["src/routes/*"]
     },
     "removeComments": true,
     "emitDecoratorMetadata": true,

@@ -32,4 +32,9 @@ export class AuthService {
       accessToken,
     };
   }
+
+  async refreshToken(id: number) {
+    const payload = { sub: id };
+    return this._jwt.sign(payload);
+  }
 }

@@ -12,7 +12,9 @@ import { Response } from 'express';
 
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Usuario')
 @Controller('user')
 export class UserController {
   constructor(private readonly _user: UserService) {}
