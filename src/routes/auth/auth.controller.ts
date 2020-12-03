@@ -15,9 +15,9 @@ import { UserEntity } from '../user/entity';
 import { Response, Request } from 'express';
 import { decode } from 'jsonwebtoken';
 import {
+  ApiAcceptedResponse,
   ApiBadRequestResponse,
   ApiBody,
-  ApiCreatedResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -37,7 +37,7 @@ export class AuthController {
       },
     },
   })
-  @ApiCreatedResponse({ description: 'Se generó correctamente.' })
+  @ApiAcceptedResponse({ description: 'Se generó correctamente.' })
   @ApiUnauthorizedResponse({
     description: 'Email y/o contraseña no coinciden para generar el token.',
   })
