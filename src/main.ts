@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder } from '@nestjs/swagger/dist/document-builder';
 import { SwaggerModule } from '@nestjs/swagger/dist/swagger-module';
+import * as rateLimit from 'express-rate-limit';
 
 import { AppModule } from './app.module';
 
@@ -18,6 +19,15 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);
+
+  app.use(
+    rateLimit({
+      windowMs: 10 * 60 * 1000, // 10 minutes
+      max: 100,
+      message: 'Se han hecho más de 100 solicitudes.',
+      skipFailedRequests: true,
+    }),
+  );
 
   await app.listen(process.env.PORT || 3000, '0.0.0.0');
 }
