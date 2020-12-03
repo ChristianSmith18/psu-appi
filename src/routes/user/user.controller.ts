@@ -1,24 +1,38 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
-  Param,
   ParseIntPipe,
   Post,
+  Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
 
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto';
-import { ApiTags } from '@nestjs/swagger';
+import { CreateUserDto, UpdateUserDto } from './dto';
+import {
+  ApiAcceptedResponse,
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Usuario')
 @Controller('user')
 export class UserController {
   constructor(private readonly _user: UserService) {}
 
+  @ApiOperation({ summary: 'Se trae todos los usuarios de la base de datos.' })
+  @ApiOkResponse({ description: 'Salió todo correcto.' })
+  @ApiBadRequestResponse({ description: 'Ocurrió un error inesperado.' })
   @Get()
   async getAllUsers(@Res() response: Response) {
     try {
@@ -29,10 +43,23 @@ export class UserController {
     }
   }
 
-  @Get(':id')
+  @ApiOperation({
+    summary: 'Se trae un usuario de la base de datos a través del id.',
+  })
+  @ApiQuery({
+    name: 'id',
+    example: 1,
+    required: true,
+    type: 'number',
+    description: 'Id del usuario.',
+  })
+  @ApiOkResponse({ description: 'Salió todo correcto.' })
+  @ApiNotFoundResponse({ description: 'No se encontró la pregunta.' })
+  @ApiBadRequestResponse({ description: 'Ocurrió un error inesperado.' })
+  @Get('one')
   async getOneUserById(
     @Res() response: Response,
-    @Param('id', new ParseIntPipe()) id: number,
+    @Query('id', new ParseIntPipe()) id: number,
   ) {
     try {
       const user = await this._user.getOneUserById(id);
@@ -47,6 +74,9 @@ export class UserController {
     }
   }
 
+  @ApiOperation({ summary: 'Crea un usuario en la base de datos.' })
+  @ApiCreatedResponse({ description: 'Se creó correctamente.' })
+  @ApiBadRequestResponse({ description: 'Ocurrió un error inesperado.' })
   @Post()
   async createUser(
     @Res() response: Response,
@@ -56,6 +86,50 @@ export class UserController {
       const user = await this._user.createUser(createUserDto);
       delete user.password;
       return response.status(HttpStatus.CREATED).json({ ok: true, user });
+    } catch (error) {
+      return response.status(HttpStatus.BAD_REQUEST).json({ ok: false, error });
+    }
+  }
+
+  @ApiOperation({ summary: 'Actualiza un usuario en la base de datos.' })
+  @ApiAcceptedResponse({ description: 'Se actualizó correctamente.' })
+  @ApiBadRequestResponse({ description: 'Ocurrió un error inesperado.' })
+  @Put()
+  async updateUser(
+    @Res() response: Response,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    try {
+      const user = await this._user.updateUser(updateUserDto);
+
+      return response.status(HttpStatus.ACCEPTED).json({ ok: true, user });
+    } catch (error) {
+      return response.status(HttpStatus.BAD_REQUEST).json({ ok: false, error });
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Elimina un usuario en la base de datos a través del id.',
+  })
+  @ApiQuery({
+    name: 'id',
+    example: 12345678,
+    required: true,
+    type: 'number',
+    description: 'Id del cliente.',
+  })
+  @ApiOkResponse({ description: 'Salió todo correcto.' })
+  @ApiNotFoundResponse({ description: 'No se encontró el cliente.' })
+  @ApiBadRequestResponse({ description: 'Ocurrió un error inesperado.' })
+  @Delete()
+  async deleteUserById(
+    @Res() response: Response,
+    @Query('id', new ParseIntPipe()) id: number,
+  ) {
+    try {
+      const user = await this._user.deleteUserById(id);
+
+      return response.status(HttpStatus.OK).json({ ok: true, user });
     } catch (error) {
       return response.status(HttpStatus.BAD_REQUEST).json({ ok: false, error });
     }

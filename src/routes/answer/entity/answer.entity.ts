@@ -11,7 +11,7 @@ import { QuestionEntity } from '@routes/question/entity';
 @Entity('Respuesta')
 export class AnswerEntity {
   @PrimaryGeneratedColumn('increment')
-  id: number;
+  id?: number;
 
   @Column({ type: 'int', name: 'alternativa_correcta' })
   correctOption: 1 | 2 | 3 | 4;

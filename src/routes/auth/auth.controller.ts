@@ -14,13 +14,34 @@ import { AuthService } from './auth.service';
 import { UserEntity } from '../user/entity';
 import { Response, Request } from 'express';
 import { decode } from 'jsonwebtoken';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 @ApiTags('Autenticación')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly _auth: AuthService) {}
 
+  @ApiOperation({ summary: 'Genera un token de inicio de sesión al usuario.' })
+  @ApiBody({
+    schema: {
+      default: {
+        email: 'example@example.com',
+        password: '12345678',
+      },
+    },
+  })
+  @ApiCreatedResponse({ description: 'Se generó correctamente.' })
+  @ApiUnauthorizedResponse({
+    description: 'Email y/o contraseña no coinciden para generar el token.',
+  })
+  @ApiBadRequestResponse({ description: 'Ocurrió un error inesperado.' })
   @UseGuards(AuthGuard('local'))
   @Post('login')
   async login(@Res() response: Response, @User() user: UserEntity) {
@@ -44,8 +65,3 @@ export class AuthController {
     return 'Tienes acceso a la información';
   }
 }
-
-// CRUD - usuario
-// CRUD - preguntas
-
-// Entity

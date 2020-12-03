@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { AnswerEntity } from '@routes/answer/entity/answer.entity';
 import { Difficulty } from '../enum';
@@ -12,7 +6,7 @@ import { Difficulty } from '../enum';
 @Entity('Pregunta')
 export class QuestionEntity {
   @PrimaryGeneratedColumn('increment')
-  id: number;
+  id?: number;
 
   @Column('text', { array: true, name: 'enunciado', nullable: false })
   statement: string[];

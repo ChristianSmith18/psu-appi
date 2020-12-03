@@ -1,4 +1,3 @@
-import { DifficultyExtra } from './enum/difficulty.enum';
 import {
   Body,
   Controller,
@@ -22,14 +21,18 @@ import {
 } from '@nestjs/swagger/dist/decorators/api-response.decorator';
 import { QuestionService } from './question.service';
 import { Response } from 'express';
-import { CreateQuestionDto, UpdateQuestionDto } from './dto';
-import { Difficulty } from './enum';
+import { QuestionDto, UpdateQuestionDto } from './dto';
+import { Difficulty, DifficultyExtra } from './enum';
 import { ApiTags } from '@nestjs/swagger';
+import { AnswerService } from '../answer/answer.service';
 
 @ApiTags('Pregunta')
 @Controller('question')
 export class QuestionController {
-  constructor(private readonly _question: QuestionService) {}
+  constructor(
+    private readonly _question: QuestionService,
+    private readonly _answer: AnswerService,
+  ) {}
 
   @ApiOperation({ summary: 'Se trae todas las preguntas de la base de datos.' })
   @ApiOkResponse({ description: 'Salió todo correcto.' })
@@ -108,10 +111,14 @@ export class QuestionController {
   @Post()
   async createQuestion(
     @Res() response: Response,
-    @Body() createQuestionDto: CreateQuestionDto,
+    @Body() bodyDto: QuestionDto,
   ) {
     try {
-      const question = await this._question.createQuestion(createQuestionDto);
+      const question = await this._question.createQuestion(bodyDto.question);
+
+      const answer = await this._answer.createAnswer(bodyDto.answer, question);
+      delete answer.question;
+      question.answer = answer;
 
       return response.status(HttpStatus.CREATED).json({ ok: true, question });
     } catch (error) {

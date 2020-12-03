@@ -1,7 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateQuestionDto, UpdateQuestionDto } from '../question/dto';
+import { CreateQuestionDto } from '../question/dto';
+import { CreateAnswerDto, UpdateAnswerDto } from './dto';
 import { AnswerEntity } from './entity';
 
 @Injectable()
@@ -11,11 +12,11 @@ export class AnswerService {
     private readonly answerRepository: Repository<AnswerEntity>,
   ) {}
 
-  async getAllQuestions(): Promise<AnswerEntity[]> {
+  async getAllAnswers(): Promise<AnswerEntity[]> {
     return await this.answerRepository.find();
   }
 
-  async getOneQuestionById(id: number): Promise<AnswerEntity> {
+  async getOneAnswerById(id: number): Promise<AnswerEntity> {
     if (id !== undefined) return await this.answerRepository.findOne({ id });
 
     throw new HttpException(
@@ -26,61 +27,54 @@ export class AnswerService {
     );
   }
 
-  async createQuestion(
-    createQuestionDto: CreateQuestionDto,
+  async createAnswer(
+    createAnswerDto: CreateAnswerDto,
+    question: CreateQuestionDto,
   ): Promise<AnswerEntity> {
-    if (
-      (await this.answerRepository.findOne(createQuestionDto.id)) ===
-      undefined
-    ) {
-      const question = this.answerRepository.create(createQuestionDto);
-      return this.answerRepository.save(question);
-    }
-    throw new HttpException(
-      {
-        error: 'Question already exists!',
-      },
-      HttpStatus.CONFLICT,
-    );
+    delete createAnswerDto.id;
+    const answer = this.answerRepository.create({
+      ...createAnswerDto,
+      question,
+    });
+    delete answer.id;
+    return this.answerRepository.save(answer);
   }
 
-  async updateQuestion(
-    updateQuestionDto: UpdateQuestionDto,
-  ): Promise<AnswerEntity> {
-    if (!updateQuestionDto.id)
+  async updateAnswer(updateAnswerDto: UpdateAnswerDto): Promise<AnswerEntity> {
+    if (!updateAnswerDto.id)
       throw new HttpException(
         {
-          error: 'Rut attribute is required!',
+          error: 'Id attribute is required!',
         },
         HttpStatus.BAD_REQUEST,
       );
 
     const updated = await this.answerRepository.update(
-      updateQuestionDto.id,
-      updateQuestionDto,
+      updateAnswerDto.id,
+      updateAnswerDto,
     );
 
     if (updated.affected > 0)
-      return await this.answerRepository.findOne(updateQuestionDto.id);
+      return await this.answerRepository.findOne(updateAnswerDto.id);
 
     throw new HttpException(
       {
-        error: 'Question not found!',
+        error: 'Answer not found!',
       },
       HttpStatus.NOT_FOUND,
     );
   }
 
-  async deleteQuestionById(id: number): Promise<AnswerEntity> {
-    const question = await this.answerRepository.findOne(id);
-    if (question !== undefined) {
+  async deleteAnswerById(id: number): Promise<AnswerEntity> {
+    const answer = await this.answerRepository.findOne(id);
+    if (answer !== undefined) {
       const deleted = await this.answerRepository.delete(id);
 
-      if (deleted.affected > 0) return question;
+      if (deleted.affected > 0) return answer;
     }
     throw new HttpException(
       {
-        error: 'Question not found!',
+        error: 'Answer not found!',
       },
       HttpStatus.NOT_FOUND,
     );

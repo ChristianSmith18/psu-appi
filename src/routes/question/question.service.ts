@@ -35,8 +35,13 @@ export class QuestionService {
 
   async countDifficulty(difficulty: Difficulty): Promise<number | any> {
     const object = { veryEasy: 0, easy: 0, medium: 0, hard: 0, veryHard: 0 };
-    if ((difficulty as any) === 'ALL') {
-      console.log(Difficulty['VERY EASY']);
+    if (
+      difficulty !== Difficulty['VERY EASY'] &&
+      difficulty !== Difficulty['EASY'] &&
+      difficulty !== Difficulty['MEDIUM'] &&
+      difficulty !== Difficulty['HARD'] &&
+      difficulty !== Difficulty['VERY HARD']
+    ) {
       object.veryEasy = await this.questionRepository.count({
         difficulty: Difficulty['VERY EASY'],
       });
@@ -62,7 +67,8 @@ export class QuestionService {
   ): Promise<QuestionEntity> {
     if (
       (await this.questionRepository.findOne(createQuestionDto.id)) ===
-      undefined
+        undefined ||
+      createQuestionDto.id === undefined
     ) {
       const newQuestion = this.questionRepository.create(createQuestionDto);
       return await this.questionRepository.save(newQuestion);
