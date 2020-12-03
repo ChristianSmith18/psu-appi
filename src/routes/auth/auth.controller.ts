@@ -32,7 +32,7 @@ export class AuthController {
   @ApiBody({
     schema: {
       default: {
-        email: 'example@example.com',
+        email: 'ejemplo@ejemplo.com',
         password: '12345678',
       },
     },
