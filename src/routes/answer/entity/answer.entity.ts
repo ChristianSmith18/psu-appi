@@ -14,10 +14,10 @@ export class AnswerEntity {
   id?: number;
 
   @Column({ type: 'int', name: 'alternativa_correcta' })
-  correctOption: 1 | 2 | 3 | 4;
+  correctOption: 1 | 2 | 3 | 4 | 5;
 
-  @Column({ type: 'varchar', name: 'descripcion' })
-  description: string;
+  @Column('text', { array: true, name: 'descripcion', nullable: false })
+  description: string[];
 
   @OneToOne(
     () => QuestionEntity,

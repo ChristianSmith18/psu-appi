@@ -23,6 +23,9 @@ export class QuestionEntity {
   @Column({ type: 'varchar', name: 'opcion_4', nullable: false })
   option4: string;
 
+  @Column({ type: 'varchar', name: 'opcion_5', nullable: false })
+  option5: string;
+
   @Column({
     type: 'varchar',
     length: 10,

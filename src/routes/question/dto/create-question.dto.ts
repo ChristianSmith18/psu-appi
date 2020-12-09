@@ -63,6 +63,14 @@ export class CreateQuestionDto {
   @IsNotEmpty({ message: 'El campo "option4" no debe estar vacío.' })
   option4!: string;
 
+  @ApiProperty({ example: 'Esta es la opción 5' })
+  @MinLength(3, {
+    message: 'El campo "option5" debe contener al menos 3 caracteres.',
+  })
+  @IsString({ message: 'El campo "option5" debe ser string.' })
+  @IsNotEmpty({ message: 'El campo "option5" no debe estar vacío.' })
+  option5!: string;
+
   @ApiProperty({ enum: Difficulty, example: 'MEDIUM' })
   @IsEnum(Difficulty, {
     message: `El campo "difficulty" debe ser de tipo: [${EnumToString(
