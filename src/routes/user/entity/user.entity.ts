@@ -31,6 +31,15 @@ export class UserEntity {
   @Column({ type: 'varchar', name: 'clave', select: false })
   password!: string;
 
+  @Column('text', {
+    array: true,
+    name: 'preguntas',
+    nullable: true,
+    select: false,
+    default: () => 'array[]::text[]',
+  })
+  questions: number[];
+
   @CreateDateColumn({ type: 'timestamp', name: 'fecha_de_creacion' })
   createdAt: Date;
 

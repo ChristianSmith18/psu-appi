@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import { CreateQuestionDto, UpdateQuestionDto } from './dto';
 import { QuestionEntity } from './entity';
@@ -13,12 +13,22 @@ export class QuestionService {
     private readonly questionRepository: Repository<QuestionEntity>,
   ) {}
 
-  async getAllQuestions(): Promise<QuestionEntity[]> {
+  async getAllQuestions(notIds = []): Promise<QuestionEntity[]> {
+    if (notIds.length === 0) {
+      return this.questionRepository.find({
+        join: {
+          alias: 'question',
+          leftJoinAndSelect: { answer: 'question.answer' },
+        },
+      });
+    }
     return this.questionRepository.find({
+      where: { id: Not(In(notIds)) },
       join: {
         alias: 'question',
         leftJoinAndSelect: { answer: 'question.answer' },
       },
+      order: { difficultyNumber: 'ASC' },
     });
   }
 

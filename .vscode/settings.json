@@ -15,5 +15,23 @@
     "titleBar.inactiveBackground": "#1857a499",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.color": "#1857a4"
+  "peacock.color": "#1857a4",
+  "sqltools.connections": [
+    {
+      "pgOptions": {
+        "ssl": {
+          "rejectUnauthorized": true,
+          "requestCert": true
+        }
+      },
+      "previewLimit": 50,
+      "server": "ec2-54-205-26-79.compute-1.amazonaws.com",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "HerokuSQL",
+      "database": "d2rvdkno0m8ogu",
+      "username": "lncgragtuziwuf",
+      "password": "8b338d0717cfc464cf65158ef36f2dc4dd30bd3e2127742daa9711e60131cc99"
+    }
+  ]
 }

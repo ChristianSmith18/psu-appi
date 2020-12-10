@@ -16,7 +16,17 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  async getOneUserById(id: number): Promise<UserEntity> {
+  async getOneUserById(
+    id: number,
+    options?: { withQuestions: boolean },
+  ): Promise<UserEntity> {
+    if (options && options.withQuestions) {
+      return this.userRepository
+        .createQueryBuilder('user')
+        .where('id = :id', { id })
+        .addSelect('user.questions')
+        .getOne();
+    }
     return this.userRepository.findOne(id);
   }
 

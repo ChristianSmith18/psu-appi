@@ -1,4 +1,10 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { AnswerEntity } from '@routes/answer/entity/answer.entity';
 import { Difficulty } from '../enum';
@@ -36,9 +42,43 @@ export class QuestionEntity {
   })
   difficulty: Difficulty;
 
+  @Column({
+    type: 'int',
+    enum: [0, 1, 2, 3, 4],
+    name: 'dificultad_numero',
+    default: 2,
+    select: false,
+    nullable: false,
+  })
+  difficultyNumber: 0 | 1 | 2 | 3 | 4;
+
   @OneToOne(
     () => AnswerEntity,
     answer => answer.question,
   )
   answer: AnswerEntity;
+
+  @BeforeInsert()
+  generateDifficultyNumber() {
+    switch (this.difficulty) {
+      case 'VERY EASY':
+        this.difficultyNumber = 0;
+        break;
+      case 'EASY':
+        this.difficultyNumber = 1;
+        break;
+      case 'MEDIUM':
+        this.difficultyNumber = 2;
+        break;
+      case 'HARD':
+        this.difficultyNumber = 3;
+        break;
+      case 'VERY HARD':
+        this.difficultyNumber = 4;
+        break;
+      default:
+        this.difficultyNumber = 2;
+        break;
+    }
+  }
 }

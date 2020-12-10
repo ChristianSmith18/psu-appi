@@ -10,5 +10,6 @@ import { QuestionService } from './question.service';
   imports: [TypeOrmModule.forFeature([QuestionEntity]), AnswerModule],
   controllers: [QuestionController],
   providers: [QuestionService],
+  exports: [QuestionService],
 })
 export class QuestionModule {}
