@@ -10,13 +10,13 @@ export class TestService {
     private readonly _question: QuestionService,
   ) {}
 
-  async generateTest(createTestDto: CreateTestDto) {
+  async generateTest(userId: number, createTestDto: CreateTestDto) {
     let count = 0;
     let key = true;
     let questionsId = [];
     let questionsTest = [];
     while (key && count <= 1) {
-      const user = await this._user.getOneUserById(createTestDto.userId, {
+      const user = await this._user.getOneUserById(userId, {
         withQuestions: true,
       });
       if (!user) {

@@ -55,11 +55,12 @@ export class AuthController {
   @Get('profile')
   profile(@Req() req: Request) {
     const token = req.headers.authorization.split(' ')[1];
-    const { exp, id } = decode(token) as any;
+    const { exp, userId } = decode(token) as any;
+
     const time = Math.round(exp - Date.now() / 1000);
 
     if (time < 20) {
-      return this._auth.refreshToken(id);
+      return this._auth.refreshToken(userId);
     }
 
     return 'Tienes acceso a la información';

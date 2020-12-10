@@ -2,10 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty, Max, Min } from 'class-validator';
 
 export class CreateTestDto {
-  @ApiProperty({ example: 1 })
-  @IsInt({ message: 'El campo "userId" debe ser int.' })
-  @IsNotEmpty({ message: 'El campo "userId" no debe estar vacío.' })
-  userId: number;
+  // @ApiProperty({ example: 1 })
+  // @IsInt({ message: 'El campo "userId" debe ser int.' })
+  // @IsNotEmpty({ message: 'El campo "userId" no debe estar vacío.' })
+  // userId: number;
 
   @ApiProperty({ example: 20 })
   @Max(100, {
