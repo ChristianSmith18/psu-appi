@@ -4,8 +4,10 @@ import {
   Delete,
   forwardRef,
   Get,
+  HttpService,
   HttpStatus,
   Inject,
+  Ip,
   ParseIntPipe,
   Post,
   Put,
@@ -27,6 +29,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
+import {
+  ParseLocation,
+  RootObjectLocation,
+} from '../location/location.interface';
 
 @ApiTags('Usuario')
 @Controller('user')
@@ -35,16 +41,33 @@ export class UserController {
     private readonly _user: UserService,
     @Inject(forwardRef(() => AuthService))
     private readonly _auth: AuthService,
+    private readonly _http: HttpService,
   ) {}
 
   @ApiOperation({ summary: 'Se trae todos los usuarios de la base de datos.' })
   @ApiOkResponse({ description: 'Salió todo correcto.' })
   @ApiBadRequestResponse({ description: 'Ocurrió un error inesperado.' })
   @Get()
-  async getAllUsers(@Res() response: Response) {
+  async getAllUsers(@Res() response: Response, @Ip() ip: string) {
     try {
       const users = await this._user.getAllUsers();
-      return response.status(HttpStatus.OK).json({ ok: true, users });
+      this._http
+        .get<RootObjectLocation>(
+          `http://api.ipstack.com/${ip}?access_key=f32a7b8d6f0b0d6abb53e46cb3e613d8&format=1`,
+        )
+        .subscribe(({ data }) => {
+          const location: ParseLocation = {
+            ip,
+            continent: data.continent_name,
+            country: data.country_name,
+            region: data.region_name,
+            city: data.city,
+            latitude: data.latitude,
+            longitude: data.longitude,
+          };
+          return response.status(HttpStatus.OK).json({ ok: true, users, location });
+          // console.log(location);
+        });
     } catch (error) {
       return response.status(HttpStatus.BAD_REQUEST).json({ ok: false, error });
     }
