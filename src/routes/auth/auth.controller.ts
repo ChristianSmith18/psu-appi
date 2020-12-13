@@ -52,9 +52,13 @@ export class AuthController {
     @Ip() ip: string,
   ) {
     const data = await this._auth.login(user, ip);
-    return response
-      .status(HttpStatus.ACCEPTED)
-      .json({ username: data.email, bearerToken: data.accessToken });
+    return response.status(HttpStatus.ACCEPTED).json({
+      ok: true,
+      data: {
+        name: `${data.firstname} ${data.lastname}`,
+        accessToken: data.accessToken,
+      },
+    });
   }
 
   @UseGuards(AuthGuard('jwt'))
