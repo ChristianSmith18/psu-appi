@@ -5,8 +5,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { RecordEntity } from '.';
 
 @Entity('Usuario')
 export class UserEntity {
@@ -42,6 +44,12 @@ export class UserEntity {
 
   @CreateDateColumn({ type: 'timestamp', name: 'fecha_de_creacion' })
   createdAt: Date;
+
+  @OneToMany(
+    () => RecordEntity,
+    record => record.user,
+  )
+  records: RecordEntity[];
 
   @BeforeInsert()
   @BeforeUpdate()

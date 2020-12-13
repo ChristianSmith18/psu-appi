@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Ip,
   Post,
   Req,
   Res,
@@ -45,8 +46,12 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'Ocurrió un error inesperado.' })
   @UseGuards(AuthGuard('local'))
   @Post('login')
-  async login(@Res() response: Response, @User() user: UserEntity) {
-    const data = await this._auth.login(user);
+  async login(
+    @Res() response: Response,
+    @User() user: UserEntity,
+    @Ip() ip: string,
+  ) {
+    const data = await this._auth.login(user, ip);
     return response
       .status(HttpStatus.ACCEPTED)
       .json({ username: data.email, bearerToken: data.accessToken });

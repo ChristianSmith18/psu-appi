@@ -8,10 +8,13 @@ import { AuthService } from './auth.service';
 import { JwtStrategy, LocalStrategy } from './strategies';
 
 import { config } from 'dotenv';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { RecordEntity } from '../user/entity';
 
 config();
 @Module({
   imports: [
+    TypeOrmModule.forFeature([RecordEntity]),
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
