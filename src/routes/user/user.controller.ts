@@ -2,8 +2,10 @@ import {
   Body,
   Controller,
   Delete,
+  forwardRef,
   Get,
   HttpStatus,
+  Inject,
   ParseIntPipe,
   Post,
   Put,
@@ -24,11 +26,16 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthService } from '../auth/auth.service';
 
 @ApiTags('Usuario')
 @Controller('user')
 export class UserController {
-  constructor(private readonly _user: UserService) {}
+  constructor(
+    private readonly _user: UserService,
+    @Inject(forwardRef(() => AuthService))
+    private readonly _auth: AuthService,
+  ) {}
 
   @ApiOperation({ summary: 'Se trae todos los usuarios de la base de datos.' })
   @ApiOkResponse({ description: 'Salió todo correcto.' })
@@ -84,8 +91,16 @@ export class UserController {
   ) {
     try {
       const user = await this._user.createUser(createUserDto);
-      delete user.password;
-      return response.status(HttpStatus.CREATED).json({ ok: true, user });
+      const data = await this._auth.login(user);
+      // delete user.password;
+      // console.log(data);
+      return response.status(HttpStatus.CREATED).json({
+        ok: true,
+        data: {
+          name: `${data.firstname} ${data.lastname}`,
+          accessToken: data.accessToken,
+        },
+      });
     } catch (error) {
       return response.status(HttpStatus.BAD_REQUEST).json({ ok: false, error });
     }

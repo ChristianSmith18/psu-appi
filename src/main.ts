@@ -15,7 +15,7 @@ async function bootstrap() {
   const options = new DocumentBuilder()
     .setTitle('Psu Appi')
     .setDescription('Api para gestionar la app de psu.')
-    .setVersion('v1.0.0')
+    .setVersion('v1.0.1')
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);
