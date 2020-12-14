@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpService, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcryptjs';
 
@@ -14,6 +14,7 @@ export class AuthService {
     private readonly _jwt: JwtService,
     @InjectRepository(RecordEntity)
     private readonly recordRepository: Repository<RecordEntity>,
+    private readonly _http: HttpService,
   ) {}
 
   async validateUser(email: string, password: string) {
@@ -32,8 +33,24 @@ export class AuthService {
     const accessToken = this._jwt.sign(payload);
 
     // Create connection record
-    const record = this.recordRepository.create({ ip, user });
-    await this.recordRepository.save(record);
+    this._http
+      .get(
+        `${process.env.LOCATION_API_URL}/${ip}?access_key=${process.env.LOCATION_API_KEY}&format=1`,
+      )
+      .subscribe(async ({ data }) => {
+        const location = {
+          ip: data.ip,
+          continent: data.continent_name,
+          country: data.country_name,
+          region: data.region_name,
+          city: data.city,
+          latitude: data.latitude,
+          longitude: data.longitude,
+          language: data.location.languages[0].native,
+        };
+        const record = this.recordRepository.create({ ...location, user });
+        await this.recordRepository.save(record);
+      });
 
     return {
       ...rest,

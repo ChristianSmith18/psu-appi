@@ -6,7 +6,6 @@ import {
   Get,
   HttpStatus,
   Inject,
-  Ip,
   ParseIntPipe,
   Post,
   Put,
@@ -28,7 +27,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
-
+import * as publicIp from 'public-ip';
 @ApiTags('Usuario')
 @Controller('user')
 export class UserController {
@@ -89,8 +88,8 @@ export class UserController {
   async createUser(
     @Res() response: Response,
     @Body() createUserDto: CreateUserDto,
-    @Ip() ip: string,
   ) {
+    const ip = await publicIp.v4();
     try {
       const user = await this._user.createUser(createUserDto);
       const data = await this._auth.login(user, ip);

@@ -2,12 +2,10 @@ import {
   Controller,
   Get,
   HttpStatus,
-  Ip,
   Post,
   Req,
   Res,
   UseGuards,
-  UsePipes,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -24,6 +22,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import * as publicIp from 'public-ip';
 
 @ApiTags('Autenticación')
 @Controller('auth')
@@ -46,12 +45,10 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'Ocurrió un error inesperado.' })
   @UseGuards(AuthGuard('local'))
   @Post('login')
-  async login(
-    @Res() response: Response,
-    @User() user: UserEntity,
-    @Ip() ip: string,
-  ) {
+  async login(@Res() response: Response, @User() user: UserEntity) {
+    const ip = await publicIp.v4();
     const data = await this._auth.login(user, ip);
+
     return response.status(HttpStatus.ACCEPTED).json({
       ok: true,
       data: {

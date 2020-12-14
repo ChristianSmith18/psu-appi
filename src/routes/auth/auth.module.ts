@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
@@ -14,6 +14,7 @@ import { RecordEntity } from '../user/entity';
 config();
 @Module({
   imports: [
+    HttpModule,
     TypeOrmModule.forFeature([RecordEntity]),
     PassportModule,
     JwtModule.register({
