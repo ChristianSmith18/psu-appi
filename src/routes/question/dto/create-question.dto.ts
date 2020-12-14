@@ -32,40 +32,40 @@ export class CreateQuestionDto {
   statement!: string[];
 
   @ApiProperty({ example: 'Esta es la opción 1' })
-  @MinLength(3, {
-    message: 'El campo "option1" debe contener al menos 3 caracteres.',
+  @MinLength(1, {
+    message: 'El campo "option1" debe contener al menos 1 caracter.',
   })
   @IsString({ message: 'El campo "option1" debe ser string.' })
   @IsNotEmpty({ message: 'El campo "option1" no debe estar vacío.' })
   option1!: string;
 
   @ApiProperty({ example: 'Esta es la opción 2' })
-  @MinLength(3, {
-    message: 'El campo "option2" debe contener al menos 3 caracteres.',
+  @MinLength(1, {
+    message: 'El campo "option2" debe contener al menos 1 caracter.',
   })
   @IsString({ message: 'El campo "option2" debe ser string.' })
   @IsNotEmpty({ message: 'El campo "option2" no debe estar vacío.' })
   option2!: string;
 
   @ApiProperty({ example: 'Esta es la opción 3' })
-  @MinLength(3, {
-    message: 'El campo "option3" debe contener al menos 3 caracteres.',
+  @MinLength(1, {
+    message: 'El campo "option3" debe contener al menos 1 caracter.',
   })
   @IsString({ message: 'El campo "option3" debe ser string.' })
   @IsNotEmpty({ message: 'El campo "option3" no debe estar vacío.' })
   option3!: string;
 
   @ApiProperty({ example: 'Esta es la opción 4' })
-  @MinLength(3, {
-    message: 'El campo "option4" debe contener al menos 3 caracteres.',
+  @MinLength(1, {
+    message: 'El campo "option4" debe contener al menos 1 caracter.',
   })
   @IsString({ message: 'El campo "option4" debe ser string.' })
   @IsNotEmpty({ message: 'El campo "option4" no debe estar vacío.' })
   option4!: string;
 
   @ApiProperty({ example: 'Esta es la opción 5' })
-  @MinLength(3, {
-    message: 'El campo "option5" debe contener al menos 3 caracteres.',
+  @MinLength(1, {
+    message: 'El campo "option5" debe contener al menos 1 caracter.',
   })
   @IsString({ message: 'El campo "option5" debe ser string.' })
   @IsNotEmpty({ message: 'El campo "option5" no debe estar vacío.' })
