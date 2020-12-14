@@ -46,7 +46,16 @@ export class TestController {
       const { userId } = decode(token) as any;
 
       const test = await this._test.generateTest(userId, createTestDto);
-      return response.status(HttpStatus.CREATED).json({ ok: true, test });
+
+      // Agregar los puntajes
+      const myScores = [];
+      for (let i = 0; i <= test.length; i++) {
+        myScores.push(Number(scores[Math.ceil(i * (75 / test.length))]));
+      }
+
+      return response
+        .status(HttpStatus.CREATED)
+        .json({ ok: true, test, scores: myScores });
     } catch (error) {
       return response.status(HttpStatus.BAD_REQUEST).json({ ok: false, error });
     }
@@ -62,12 +71,10 @@ export class TestController {
   ) {
     try {
       if (createScoreDto.total < createScoreDto.correctAnswers) {
-        return response
-          .status(HttpStatus.BAD_REQUEST)
-          .json({
-            ok: false,
-            error: '"CorrectAnswer" can\'t be greater than "Total"',
-          });
+        return response.status(HttpStatus.BAD_REQUEST).json({
+          ok: false,
+          error: '"CorrectAnswer" can\'t be greater than "Total"',
+        });
       }
 
       createScoreDto.total = createScoreDto.total || 20;
