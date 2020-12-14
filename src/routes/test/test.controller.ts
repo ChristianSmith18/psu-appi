@@ -61,6 +61,15 @@ export class TestController {
     @Body() createScoreDto: CreateScoreDto,
   ) {
     try {
+      if (createScoreDto.total < createScoreDto.correctAnswers) {
+        return response
+          .status(HttpStatus.BAD_REQUEST)
+          .json({
+            ok: false,
+            error: '"CorrectAnswer" can\'t be greater than "Total"',
+          });
+      }
+
       createScoreDto.total = createScoreDto.total || 20;
 
       return response.status(HttpStatus.ACCEPTED).json({
