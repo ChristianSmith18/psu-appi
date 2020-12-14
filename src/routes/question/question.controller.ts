@@ -99,7 +99,7 @@ export class QuestionController {
   ) {
     try {
       const count = await this._question.countDifficulty(difficulty);
-      return response.status(HttpStatus.BAD_REQUEST).json({ ok: true, count });
+      return response.status(HttpStatus.OK).json({ ok: true, count });
     } catch (error) {
       return response.status(HttpStatus.BAD_REQUEST).json({ ok: false, error });
     }
