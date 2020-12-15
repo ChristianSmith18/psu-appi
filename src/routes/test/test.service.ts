@@ -183,13 +183,12 @@ export class TestService {
         }
       }
 
-      user.questions = [...user.questions, ...questionsId];
-
       if (questionsTest.length < createTestDto.numberOfQuestions) {
         const diff = createTestDto.numberOfQuestions - questionsTest.length;
         user.questions = user.questions.slice(diff);
         count++;
       } else {
+        user.questions = [...user.questions, ...questionsId];
         key = false;
       }
 

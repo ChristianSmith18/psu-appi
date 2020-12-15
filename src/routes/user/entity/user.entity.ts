@@ -33,12 +33,12 @@ export class UserEntity {
   @Column({ type: 'varchar', name: 'clave', select: false })
   password!: string;
 
-  @Column('text', {
+  @Column('integer', {
     array: true,
     name: 'preguntas',
     nullable: true,
     select: false,
-    default: () => 'array[]::text[]',
+    default: () => 'array[]::integer[]',
   })
   questions: number[];
 
