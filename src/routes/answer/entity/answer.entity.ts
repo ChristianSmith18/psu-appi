@@ -22,6 +22,7 @@ export class AnswerEntity {
   @OneToOne(
     () => QuestionEntity,
     question => question.answer,
+    { onDelete: 'CASCADE', onUpdate: 'CASCADE' },
   )
   @JoinColumn({ name: 'pregunta_id' })
   question: QuestionEntity;
