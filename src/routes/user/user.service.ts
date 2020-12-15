@@ -16,6 +16,26 @@ export class UserService {
     return this.userRepository.find();
   }
 
+  async getUserRecords(id?: number): Promise<UserEntity[] | UserEntity> {
+    if (id) {
+      return this.userRepository.find({
+        where: { id },
+        join: {
+          alias: 'user',
+          leftJoinAndSelect: { records: 'user.records' },
+        },
+        order: { id: 1 },
+      });
+    }
+    return this.userRepository.find({
+      join: {
+        alias: 'user',
+        leftJoinAndSelect: { records: 'user.records' },
+      },
+      order: { id: 1 },
+    });
+  }
+
   async getOneUserById(
     id: number,
     options?: { withQuestions: boolean },

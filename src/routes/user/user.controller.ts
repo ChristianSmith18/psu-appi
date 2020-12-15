@@ -20,6 +20,7 @@ import {
   ApiAcceptedResponse,
   ApiBadRequestResponse,
   ApiCreatedResponse,
+  ApiExcludeEndpoint,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -45,6 +46,17 @@ export class UserController {
     try {
       const users = await this._user.getAllUsers();
       return response.status(HttpStatus.OK).json({ ok: true, users });
+    } catch (error) {
+      return response.status(HttpStatus.BAD_REQUEST).json({ ok: false, error });
+    }
+  }
+
+  @ApiExcludeEndpoint()
+  @Get('records')
+  async getUserRecords(@Res() response: Response, @Query('id') id: number) {
+    try {
+      const user_s = await this._user.getUserRecords(Number(id) || id);
+      return response.status(HttpStatus.OK).json({ ok: true, user_s });
     } catch (error) {
       return response.status(HttpStatus.BAD_REQUEST).json({ ok: false, error });
     }

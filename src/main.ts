@@ -4,7 +4,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder } from '@nestjs/swagger/dist/document-builder';
 import { SwaggerModule } from '@nestjs/swagger/dist/swagger-module';
 import * as rateLimit from 'express-rate-limit';
-import * as device from 'express-device';
 
 import { AppModule } from './app.module';
 
@@ -12,7 +11,6 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
-  app.use(device.capture());
 
   const options = new DocumentBuilder()
     .setTitle('Psu Appi')
