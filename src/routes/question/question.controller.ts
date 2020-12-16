@@ -21,10 +21,12 @@ import {
 } from '@nestjs/swagger/dist/decorators/api-response.decorator';
 import { QuestionService } from './question.service';
 import { Response } from 'express';
-import { QuestionDto, UpdateQuestionDto } from './dto';
+import { QuestionDto, QuestionUpDto, UpdateQuestionDto } from './dto';
 import { Difficulty, DifficultyExtra } from './enum';
 import { ApiTags } from '@nestjs/swagger';
 import { AnswerService } from '../answer/answer.service';
+import { QuestionEntity } from './entity';
+import { AnswerEntity } from '../answer/entity';
 
 @ApiTags('Pregunta')
 @Controller('question')
@@ -132,12 +134,25 @@ export class QuestionController {
   @Put()
   async updateQuestion(
     @Res() response: Response,
-    @Body() updateQuestionDto: UpdateQuestionDto,
+    @Body() updateQuestionDto: QuestionUpDto,
   ) {
     try {
-      const question = await this._question.updateQuestion(updateQuestionDto);
+      // let question: QuestionEntity;
+      // if (updateQuestionDto.question.id) {
+      //   question = await this._question.updateQuestion(
+      //     updateQuestionDto.question,
+      //   );
+      // }
 
-      return response.status(HttpStatus.ACCEPTED).json({ ok: true, question });
+      // console.log(updateQuestionDto.answer);
+      let answer: AnswerEntity;
+      if (updateQuestionDto.answer.id) {
+        answer = await this._answer.updateAnswer(updateQuestionDto.answer);
+        delete answer.question;
+        // question.answer = answer;
+      }
+
+      return response.status(HttpStatus.ACCEPTED).json({ ok: true, answer });
     } catch (error) {
       return response.status(HttpStatus.BAD_REQUEST).json({ ok: false, error });
     }
