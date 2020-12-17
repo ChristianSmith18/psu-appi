@@ -1,3 +1,4 @@
+import { QuestionEntity } from '@src/routes/question/entity';
 import { hash } from 'bcryptjs';
 import {
   BeforeInsert,
@@ -33,6 +34,9 @@ export class UserEntity {
   @Column({ type: 'varchar', name: 'clave', select: false })
   password!: string;
 
+  @Column({ type: 'varchar', name: 'tipo', default: 'USER_ROLE', length: 15 })
+  role!: string;
+
   @Column('integer', {
     array: true,
     name: 'preguntas',
@@ -50,6 +54,13 @@ export class UserEntity {
     record => record.user,
   )
   records: RecordEntity[];
+
+  @OneToMany(
+    () => QuestionEntity,
+    question => question.user,
+    { nullable: true },
+  )
+  createdQuestions: QuestionEntity[];
 
   @BeforeInsert()
   @BeforeUpdate()

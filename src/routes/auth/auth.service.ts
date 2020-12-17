@@ -53,6 +53,7 @@ export class AuthService {
       });
 
     return {
+      id,
       ...rest,
       accessToken,
     };

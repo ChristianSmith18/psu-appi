@@ -52,7 +52,9 @@ export class AuthController {
     return response.status(HttpStatus.ACCEPTED).json({
       ok: true,
       data: {
+        id: data.id,
         name: `${data.firstname} ${data.lastname}`,
+        role: data.role,
         accessToken: data.accessToken,
       },
     });

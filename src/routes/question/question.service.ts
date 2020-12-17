@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
+import { UserEntity } from '../user/entity';
 
 import { CreateQuestionDto, UpdateQuestionDto } from './dto';
 import { QuestionEntity } from './entity';
@@ -85,6 +86,7 @@ export class QuestionService {
   }
 
   async createQuestion(
+    user: UserEntity,
     createQuestionDto: CreateQuestionDto,
   ): Promise<QuestionEntity> {
     if (
@@ -92,7 +94,10 @@ export class QuestionService {
         undefined ||
       createQuestionDto.id === undefined
     ) {
-      const newQuestion = this.questionRepository.create(createQuestionDto);
+      const newQuestion = this.questionRepository.create({
+        ...createQuestionDto,
+        user,
+      });
       return await this.questionRepository.save(newQuestion);
     }
 

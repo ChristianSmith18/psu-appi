@@ -8,7 +8,9 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger/dist/decorators/api-operation.decorator';
 import { ApiQuery } from '@nestjs/swagger/dist/decorators/api-query.decorator';
@@ -18,15 +20,18 @@ import {
   ApiNotFoundResponse,
   ApiCreatedResponse,
   ApiAcceptedResponse,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger/dist/decorators/api-response.decorator';
 import { QuestionService } from './question.service';
-import { Response } from 'express';
-import { QuestionDto, QuestionUpDto, UpdateQuestionDto } from './dto';
+import { Response, Request } from 'express';
+import { QuestionDto, QuestionUpDto } from './dto';
 import { Difficulty, DifficultyExtra } from './enum';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AnswerService } from '../answer/answer.service';
-import { QuestionEntity } from './entity';
 import { AnswerEntity } from '../answer/entity';
+import { AuthGuard } from '@nestjs/passport';
+import { decode } from 'jsonwebtoken';
+import { UserService } from '../user/user.service';
 
 @ApiTags('Pregunta')
 @Controller('question')
@@ -34,6 +39,7 @@ export class QuestionController {
   constructor(
     private readonly _question: QuestionService,
     private readonly _answer: AnswerService,
+    private readonly _user: UserService,
   ) {}
 
   @ApiOperation({ summary: 'Se trae todas las preguntas de la base de datos.' })
@@ -109,20 +115,45 @@ export class QuestionController {
 
   @ApiOperation({ summary: 'Crea una pregunta en la base de datos.' })
   @ApiCreatedResponse({ description: 'Se creó correctamente.' })
+  @ApiUnauthorizedResponse({
+    description: 'No tienes los permisos suficientes.',
+  })
   @ApiBadRequestResponse({ description: 'Ocurrió un error inesperado.' })
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('jwt')
   @Post()
   async createQuestion(
+    @Req() req: Request,
     @Res() response: Response,
     @Body() bodyDto: QuestionDto,
   ) {
+    const token = req.headers.authorization.split(' ')[1];
+    const { userId } = decode(token) as any;
     try {
-      const question = await this._question.createQuestion(bodyDto.question);
+      const user = await this._user.getOneUserById(userId);
+      if (user.role === 'ADMIN_ROLE') {
+        const question = await this._question.createQuestion(
+          user,
+          bodyDto.question,
+        );
+        delete question.user;
 
-      const answer = await this._answer.createAnswer(bodyDto.answer, question);
-      delete answer.question;
-      question.answer = answer;
+        const answer = await this._answer.createAnswer(
+          bodyDto.answer,
+          question,
+        );
+        delete answer.question;
+        question.answer = answer;
 
-      return response.status(HttpStatus.CREATED).json({ ok: true, question });
+        return response.status(HttpStatus.CREATED).json({ ok: true, question });
+      }
+
+      return response
+        .status(HttpStatus.UNAUTHORIZED)
+        .json({
+          ok: false,
+          error: `User ${user.firstname} ${user.lastname} does not have sufficient permissions.`,
+        });
     } catch (error) {
       return response.status(HttpStatus.BAD_REQUEST).json({ ok: false, error });
     }

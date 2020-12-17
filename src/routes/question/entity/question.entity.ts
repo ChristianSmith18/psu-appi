@@ -1,13 +1,17 @@
 import {
   BeforeInsert,
+  BeforeUpdate,
   Column,
+  CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { AnswerEntity } from '@routes/answer/entity/answer.entity';
 import { Difficulty } from '../enum';
+import { UserEntity } from '@src/routes/user/entity';
 
 @Entity('Pregunta')
 export class QuestionEntity {
@@ -52,11 +56,24 @@ export class QuestionEntity {
   })
   difficultyNumber: 0 | 1 | 2 | 3 | 4;
 
+  @CreateDateColumn({
+    type: 'timestamp',
+    name: 'ultima_actualizacion',
+  })
+  updateAt: Date;
+
   @OneToOne(
     () => AnswerEntity,
     answer => answer.question,
   )
   answer: AnswerEntity;
+
+  @ManyToOne(
+    () => UserEntity,
+    user => user.createdQuestions,
+    { nullable: true },
+  )
+  user: UserEntity;
 
   @BeforeInsert()
   generateDifficultyNumber() {
@@ -80,5 +97,10 @@ export class QuestionEntity {
         this.difficultyNumber = 2;
         break;
     }
+  }
+
+  @BeforeUpdate()
+  updateDate() {
+    this.updateAt = new Date();
   }
 }

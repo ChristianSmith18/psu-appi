@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   MinLength,
+  IsEnum,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -43,4 +44,13 @@ export class CreateUserDto {
   @IsString({ message: 'El campo "password" debe ser string.' })
   @IsNotEmpty({ message: 'El campo "password" no debe estar vacío.' })
   password!: string;
+
+  @ApiProperty({ enum: ['USER_ROLE', 'ADMIN_ROLE'], default: 'USER_ROLE' })
+  @IsEnum(['USER_ROLE', 'ADMIN_ROLE'], {
+    message: `El campo "role" debe ser de tipo: ['USER_ROLE', 'ADMIN_ROLE'].`,
+  })
+  @IsString({ message: 'El campo "role" debe ser un string.' })
+  @IsNotEmpty({ message: 'El campo "role" no debe estar vacío.' })
+  @IsOptional()
+  role!: string;
 }
